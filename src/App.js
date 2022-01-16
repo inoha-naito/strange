@@ -1,9 +1,10 @@
 import React from 'react';
+import Upload from './components/Upload';
 
-function App() {
+const App = () => {
   return (
     <React.Fragment>
-      <p>Hello, React!</p>
+      <Upload />
     </React.Fragment>
   );
 }
