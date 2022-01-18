@@ -5,7 +5,7 @@ import { storage } from '../scripts/firebase';
 
 const onFileInputChange = e => {
   const file = e.target.files[0];
-  const storageRef = ref(storage, file.name);
+  const storageRef = ref(storage, 'images/' + file.name);
   uploadBytes(storageRef, file).then(() => {
     console.log('Uploaded!');
   });
@@ -14,7 +14,7 @@ const onFileInputChange = e => {
 const Upload = () => {
   return (
     <React.Fragment>
-      <input type='file' onChange={onFileInputChange} />
+      <input type='file' accept='image/*' onChange={onFileInputChange} />
     </React.Fragment>
   );
 }
