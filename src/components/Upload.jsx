@@ -4,10 +4,19 @@ import { ref, uploadBytes } from 'firebase/storage';
 import { storage } from '../scripts/firebase'; 
 
 const Upload = () => {
-  const [files, setFiles] = useState([]);
-
+  let files;
+  const [images, setImages] = useState([]);
+  
   const onFileInputChange = e => {
-    setFiles(Array.from(e.target.files));
+    files = Array.from(e.target.files);
+    for (const file of files) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const result = e.target.result;
+        setImages([...images, <img src={result} key={file.name} />]);
+      }
+      reader.readAsDataURL(file);
+    }
   }
 
   const clickSubmit = e => {
@@ -31,6 +40,7 @@ const Upload = () => {
         />
         <button type='submit' onClick={clickSubmit}>送信</button>
       </form>
+      { images }
     </React.Fragment>
   );
 }
