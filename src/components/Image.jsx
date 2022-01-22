@@ -4,7 +4,7 @@ const Image = (props) => {
   return (
     <React.Fragment>
       <img
-        src={props.file}
+        src={props.url}
         alt={props.name}
       />
     </React.Fragment>

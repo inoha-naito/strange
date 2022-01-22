@@ -1,28 +1,38 @@
 import React, { useState } from 'react';
 import { ref, uploadBytes } from 'firebase/storage';
-
-import { storage } from '../scripts/firebase'; 
-
+import { storage } from '../scripts/firebase';
 import Image from './Image';
 
-const Upload = () => {
-  let files;
-  const [images, setImages] = useState([]);
-  
-  const onFileInputChange = e => {
-    files = Array.from(e.target.files);
-    for (const file of files) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const result = e.target.result;
-        setImages([...images, <Image key={file.name} file={result} name={file.name} />]);
-      }
-      reader.readAsDataURL(file);
+const getDataURL = (file) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataURL = reader.result;
+      resolve(dataURL);
     }
+    reader.readAsDataURL(file);
+  });
+}
+
+const Upload = () => {
+  const [files, setFiles] = useState([]);
+  const [images, setImages] = useState([]);
+
+  const handleInputChange = async (event) => {
+    const fileList = Array.from(event.target.files);
+    const imageList = [];
+    for (const file of fileList) {
+      const dataURL = await getDataURL(file);
+      imageList.push(
+        <Image key={file.name} url={dataURL} name={file.name} />
+      );
+    }
+    setFiles(fileList);
+    setImages(imageList);
   }
 
-  const clickSubmit = e => {
-    e.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
     files.forEach((file) => {
       const storageRef = ref(storage, `images/${file.name}`);
       uploadBytes(storageRef, file).then(() => {
@@ -38,9 +48,9 @@ const Upload = () => {
           type='file'
           accept='image/*'
           multiple
-          onChange={onFileInputChange}
+          onChange={handleInputChange}
         />
-        <button type='submit' onClick={clickSubmit}>送信</button>
+        <button type='submit' onClick={handleSubmit}>送信</button>
       </form>
       { images }
     </React.Fragment>
