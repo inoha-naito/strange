@@ -3,6 +3,8 @@ import { ref, uploadBytes } from 'firebase/storage';
 
 import { storage } from '../scripts/firebase'; 
 
+import Image from './Image';
+
 const Upload = () => {
   let files;
   const [images, setImages] = useState([]);
@@ -13,7 +15,7 @@ const Upload = () => {
       const reader = new FileReader();
       reader.onload = e => {
         const result = e.target.result;
-        setImages([...images, <img src={result} key={file.name} />]);
+        setImages([...images, <Image key={file.name} file={result} name={file.name} />]);
       }
       reader.readAsDataURL(file);
     }
