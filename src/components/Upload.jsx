@@ -41,15 +41,14 @@ const Upload = () => {
       usersRef,
       user
     );
-    const urlList = [];
-    for (const file of files) {
+    const urlList = await Promise.all(files.map(async (file) => {
       const storageRef = ref(storage, `images/${userDocRef.id}/${file.name}`);
       await uploadBytes(storageRef, file).then(() => {
         console.log('Uploaded!');
       });
       const url = await getDownloadURL(storageRef);
-      urlList.push(url);
-    }
+      return url;
+    }));
     await updateDoc(
       userDocRef,
       {
