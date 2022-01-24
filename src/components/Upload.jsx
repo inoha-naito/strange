@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, getDocs, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc, query, orderBy } from 'firebase/firestore';
 import { storage, db } from '../scripts/firebase';
 import { user } from '../scripts/userConst';
 import Image from './Image';
@@ -60,7 +60,9 @@ const Upload = () => {
   }
 
   const getPostedImages = async () => {
-    const querySnap = await getDocs(collection(db, 'users'));
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, orderBy('createdAt', 'desc'));
+    const querySnap = await getDocs(q);
     const postedList = [];
     querySnap.forEach((doc) => {
       const urlList = doc.data().urlList;
