@@ -64,15 +64,21 @@ const Upload = () => {
     const q = query(usersRef, orderBy('createdAt', 'desc'));
     const querySnap = await getDocs(q);
     const postedList = [];
-    querySnap.forEach((doc) => {
+    let count = 0;
+    for (const doc of querySnap.docs) {
       const urlList = doc.data().urlList;
       for (const url of urlList) {
         const name = url.split('?')[0].split('%2F').slice(-1)[0];
         postedList.push(
           <Image key={url} url={url} name={name} />
         );
+        count++;
+        if (count >= 5) {
+          setPosted(postedList);
+          return;
+        }
       }
-    });
+    }
     setPosted(postedList);
   }
 
