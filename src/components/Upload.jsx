@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { storage, db } from '../scripts/firebase';
+import { user } from '../scripts/userConst';
 import Image from './Image';
 
 const getDataURL = (file) => {
@@ -35,19 +36,24 @@ const Upload = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const usersRef = collection(db, 'users');
+    const userDocRef = await addDoc(
+      usersRef,
+      user
+    );
     const urlList = [];
     for (const file of files) {
-      const storageRef = ref(storage, `images/${file.name}`);
+      const storageRef = ref(storage, `images/${userDocRef.id}/${file.name}`);
       await uploadBytes(storageRef, file).then(() => {
         console.log('Uploaded!');
       });
       const url = await getDownloadURL(storageRef);
       urlList.push(url);
     }
-    const usersRef = collection(db, 'users');
-    await addDoc(
-      usersRef,
+    await updateDoc(
+      userDocRef,
       {
+        id: userDocRef.id,
         urlList
       }
     );
