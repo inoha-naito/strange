@@ -37,10 +37,7 @@ const Upload = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const usersRef = collection(db, 'users');
-    const userDocRef = await addDoc(
-      usersRef,
-      user
-    );
+    const userDocRef = await addDoc(usersRef, user);
     const urlList = await Promise.all(files.map(async (file) => {
       const storageRef = ref(storage, `images/${userDocRef.id}/${file.name}`);
       await uploadBytes(storageRef, file).then(() => {
@@ -49,13 +46,7 @@ const Upload = () => {
       const url = await getDownloadURL(storageRef);
       return url;
     }));
-    await updateDoc(
-      userDocRef,
-      {
-        id: userDocRef.id,
-        urlList
-      }
-    );
+    await updateDoc(userDocRef, {id: userDocRef.id, urlList});
   }
 
   const getPostedImages = async () => {
