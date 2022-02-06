@@ -5,6 +5,8 @@ import { storage, db } from '../scripts/firebase';
 import { user } from '../scripts/userConst';
 import Image from './Image';
 
+const maxImageCount = 5;
+
 const getDataURL = (file) => {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -63,7 +65,7 @@ const Upload = () => {
           <Image key={url} url={url} name={name} />
         );
         count++;
-        if (count >= 5) {
+        if (count >= maxImageCount) {
           setPosted(postedList);
           return;
         }
